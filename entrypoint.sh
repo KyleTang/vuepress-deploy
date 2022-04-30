@@ -38,16 +38,19 @@ if [ "$TARGET_LINK" ]; then
 fi
 
 # 创建临时目录
-GIT_TEMP_DIR=${BUILD_DIR}_temp
-echo "==> clone into local: $GIT_TEMP_DIR"
+if [[ -z "$GIT_TEMP_DIR" ]]; then
+  GIT_TEMP_DIR="`pwd`/dist_tmp"
+fi
 
 mkdir -p $GIT_TEMP_DIR
 cd $GIT_TEMP_DIR
-# 从远端克隆到本地
-git clone $DEPLOY_REPO master:$DEPLOY_BRAN
+
+# 从远端克隆到本地, 并合并修改
+echo "==> clone into local: $GIT_TEMP_DIR"
+git clone $DEPLOY_REPO@$DEPLOY_BRAN
 
 echo "==> merge build to $GIT_TEMP_DIR"
-cp -rf $BUILD_DIR/* ./
+cp -rf $BUILD_DIR ./
 
 echo "==> Prepare to deploy"
 
