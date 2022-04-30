@@ -47,7 +47,8 @@ cd $GIT_TEMP_DIR
 
 # 从远端克隆到本地, 并合并修改
 echo "==> clone into local: $GIT_TEMP_DIR"
-git clone $DEPLOY_REPO@$DEPLOY_BRAN
+git clone $DEPLOY_REPO .
+git checkout $DEPLOY_BRAN
 
 echo "==> merge build to $GIT_TEMP_DIR"
 cp -rf $BUILD_DIR ./
