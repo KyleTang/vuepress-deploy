@@ -14,8 +14,8 @@ eval "$BUILD_SCRIPT"
 echo "Build success"
 
 # Change directory to the dest
-echo "==> Changing directory to '$BUILD_DIR' ..."
-cd $BUILD_DIR
+## echo "==> Changing directory to '$BUILD_DIR' ..."
+## cd $BUILD_DIR
 
 # Get respository
 if [[ -z "$TARGET_REPO" ]]; then
@@ -37,9 +37,21 @@ if [ "$TARGET_LINK" ]; then
   DEPLOY_REPO="$TARGET_LINK"
 fi
 
+# 创建临时目录
+GIT_TEMP_DIR=${BUILD_DIR}_temp
+echo "==> clone into local: $GIT_TEMP_DIR"
+
+mkdir -p $GIT_TEMP_DIR
+cd $GIT_TEMP_DIR
+# 从远端克隆到本地
+git clone $DEPLOY_REPO master:$DEPLOY_BRAN
+
+echo "==> merge build to $GIT_TEMP_DIR"
+cp -rf $BUILD_DIR/* ./
+
 echo "==> Prepare to deploy"
 
-git init
+#git init
 git config user.name "${GITHUB_ACTOR}"
 git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 
@@ -64,8 +76,9 @@ fi
 
 git add .
 git commit -m "$COMMIT_MESSAGE"
-git push --force $DEPLOY_REPO master:$DEPLOY_BRAN
-rm -fr .git
+#git push --force $DEPLOY_REPO master:$DEPLOY_BRAN
+git push $DEPLOY_REPO master:$DEPLOY_BRAN
+#rm -fr .git
 
 cd $GITHUB_WORKSPACE
 
