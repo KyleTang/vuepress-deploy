@@ -17,6 +17,8 @@ echo "Build success"
 ## echo "==> Changing directory to '$BUILD_DIR' ..."
 ## cd $BUILD_DIR
 
+BASE_DIR=`pwd`
+
 # Get respository
 if [[ -z "$TARGET_REPO" ]]; then
   REPOSITORY_NAME="${GITHUB_REPOSITORY}"
@@ -39,7 +41,7 @@ fi
 
 # 创建临时目录
 if [[ -z "$GIT_TEMP_DIR" ]]; then
-  GIT_TEMP_DIR="`pwd`/dist_tmp"
+  GIT_TEMP_DIR="$BASE_DIR/dist_tmp"
 fi
 
 mkdir -p $GIT_TEMP_DIR
@@ -47,10 +49,11 @@ cd $GIT_TEMP_DIR
 
 # 从远端克隆到本地, 并合并修改
 echo "==> clone into local: $GIT_TEMP_DIR"
-git clone $DEPLOY_REPO@$DEPLOY_BRAN
+git clone $DEPLOY_REPO .
+git checkout $DEPLOY_BRAN
 
 echo "==> merge build to $GIT_TEMP_DIR"
-cp -rf $BUILD_DIR ./
+cp -rf $BASE_DIR/$BUILD_DIR ./
 
 echo "==> Prepare to deploy"
 
